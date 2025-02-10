@@ -1,0 +1,12 @@
+{% extends 'schedule_app/base.html' %}
+
+{% block title %}Ошибка{% endblock %}
+
+{% block content %}
+<div class="alert alert-danger">
+    {{ message }}
+</div>
+<a href="{% url 'schedule_app:calendar_view' %}" class="btn btn-primary">
+    Вернуться к календарю
+</a>
+{% endblock %} 

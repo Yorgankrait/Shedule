@@ -1,0 +1,69 @@
+python manage.py shell
+
+from schedule_app.models import Schedule
+from datetime import datetime, time
+
+# Создаем расписание на 5 февраля 2025
+schedules = [
+    Schedule(
+        date=datetime(2025, 2, 5).date(),
+        class_number='9А',
+        classroom='305',
+        lesson_time=time(8, 30),
+        lesson_number=1,
+        subject='Математика',
+        teacher_replaced='Петрова Анна Ивановна',
+        teacher_replacing='Иванов Сергей Петрович',
+        comment='Замена по причине больничного'
+    ),
+    Schedule(
+        date=datetime(2025, 2, 5).date(),
+        class_number='7Б',
+        classroom='201',
+        lesson_time=time(9, 25),
+        lesson_number=2,
+        subject='Русский язык',
+        teacher_replaced='Сидорова Елена Александровна',
+        teacher_replacing='Кузнецова Мария Владимировна',
+        comment='Плановая замена'
+    ),
+    Schedule(
+        date=datetime(2025, 2, 5).date(),
+        class_number='11А',
+        classroom='401',
+        lesson_time=time(10, 20),
+        lesson_number=3,
+        subject='Физика',
+        teacher_replaced='Николаев Дмитрий Сергеевич',
+        teacher_replacing='Морозова Ольга Павловна',
+        comment='Методический день'
+    ),
+    Schedule(
+        date=datetime(2025, 2, 5).date(),
+        class_number='8В',
+        classroom='102',
+        lesson_time=time(11, 15),
+        lesson_number=4,
+        subject='История',
+        teacher_replaced='Морозова Ольга Павловна',
+        teacher_replacing='Соколов Андрей Викторович',
+        comment='Курсы повышения квалификации'
+    ),
+    Schedule(
+        date=datetime(2025, 2, 5).date(),
+        class_number='10Б',
+        classroom='308',
+        lesson_time=time(12, 10),
+        lesson_number=5,
+        subject='Химия',
+        teacher_replaced='Соколов Андрей Викторович',
+        teacher_replacing='Николаев Дмитрий Сергеевич',
+        comment='Административное совещание'
+    )
+]
+
+# Сохраняем все записи в базу данных
+for schedule in schedules:
+    schedule.save()
+
+exit() 

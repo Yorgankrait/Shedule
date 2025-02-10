@@ -1,0 +1,73 @@
+{% extends 'schedule_app/base.html' %}
+
+{% block title %}Календарь{% endblock %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        {% if show_prev %}
+        <a href="?year={{ prev_month.year }}&month={{ prev_month.month }}" 
+           class="btn btn-outline-primary">
+            &larr; {{ prev_month_name }} {{ prev_month.year }}
+        </a>
+        {% endif %}
+    </div>
+    <div class="col text-center">
+        <h2>{{ month_name }} {{ current_year }}</h2>
+    </div>
+    <div class="col text-end">
+        {% if show_next %}
+        <a href="?year={{ next_month.year }}&month={{ next_month.month }}" 
+           class="btn btn-outline-primary">
+            {{ next_month_name }} {{ next_month.year }} &rarr;
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-bordered calendar-table">
+        <thead>
+            <tr>
+                <th class="text-center">Пн</th>
+                <th class="text-center">Вт</th>
+                <th class="text-center">Ср</th>
+                <th class="text-center">Чт</th>
+                <th class="text-center">Пт</th>
+                <th class="text-center weekend">Сб</th>
+                <th class="text-center weekend">Вс</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for week in calendar %}
+                <tr>
+                    {% for day in week %}
+                        <td class="text-center calendar-day {% if forloop.counter > 5 %}weekend{% endif %}">
+                            {% if day != 0 %}
+                                {% with date_string=current_year|stringformat:"d" %}
+                                    {% with month_string=current_month|stringformat:"02d" %}
+                                        {% with day_string=day|stringformat:"02d" %}
+                                            {% with full_date=date_string|add:"-"|add:month_string|add:"-"|add:day_string %}
+                                                {% if full_date in scheduled_dates %}
+                                                    <a href="{% url 'schedule_app:schedule_by_date' date=full_date %}" 
+                                                       class="btn btn-calendar has-schedule {% if forloop.counter > 5 %}weekend{% endif %}">
+                                                        {{ day }}
+                                                    </a>
+                                                {% else %}
+                                                    <span class="btn btn-calendar {% if forloop.counter > 5 %}weekend{% endif %}">
+                                                        {{ day }}
+                                                    </span>
+                                                {% endif %}
+                                            {% endwith %}
+                                        {% endwith %}
+                                    {% endwith %}
+                                {% endwith %}
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %} 

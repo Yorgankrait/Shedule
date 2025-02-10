@@ -1,0 +1,55 @@
+{% extends 'schedule_app/base.html' %}
+
+{% block title %}{{ event.title }}{% endblock %}
+
+{% block content %}
+<div class="event-detail">
+    <div class="mb-4">
+        <a href="{% url 'schedule_app:event_list' %}" class="btn btn-outline-secondary">
+            Назад к списку мероприятий
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title">{{ event.title }}</h2>
+            <div class="event-meta mb-4">
+                <span class="date">{{ event.date|date:"d.m.Y" }}</span>
+                {% if event.time %}
+                    <span class="time">{{ event.time|time:"H:i" }}</span>
+                {% endif %}
+                {% if event.is_important %}
+                    <span class="badge bg-danger">Важное</span>
+                {% endif %}
+            </div>
+
+            <div class="event-description mb-4">
+                {{ event.description|linebreaks }}
+            </div>
+
+            {% if event.files.exists %}
+                <div class="event-files">
+                    <h4>Прикрепленные файлы:</h4>
+                    <div class="row">
+                        {% for file in event.files.all %}
+                            <div class="col-md-4 mb-3">
+                                <div class="file-card">
+                                    {% if file.is_image %}
+                                        <img src="{{ file.file.url }}" alt="{{ file.file_name }}" class="img-fluid mb-2">
+                                    {% endif %}
+                                    <div class="file-info">
+                                        <span class="file-name">{{ file.file_name }}</span>
+                                        <a href="{{ file.file.url }}" class="btn btn-sm btn-primary" download>
+                                            Скачать
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

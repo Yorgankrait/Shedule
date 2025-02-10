@@ -1,0 +1,108 @@
+{% extends 'schedule_app/base.html' %}
+
+{% block title %}Последние замены{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2>
+            {% if selected_replaced or selected_replacing %}
+                Замены
+                {% if selected_replaced %}
+                    учителя: {{ selected_replaced }} (кого заменяют)
+                {% endif %}
+                {% if selected_replacing %}
+                    {% if selected_replaced %}и{% endif %}
+                    учителя: {{ selected_replacing }} (кто заменяет)
+                {% endif %}
+            {% else %}
+                Замены на {{ current_date|date:"d.m.Y" }}
+            {% endif %}
+        </h2>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{% url 'schedule_app:download_pdf' %}" class="btn btn-primary">
+            <i class="fas fa-download"></i> Скачать PDF
+        </a>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <form method="get" class="teacher-filter">
+            <div class="input-group">
+                <label class="input-group-text" for="replaced-select">Кого заменяют:</label>
+                <select name="replaced_teacher" id="replaced-select" class="form-select" onchange="this.form.submit()">
+                    <option value="">Все учителя</option>
+                    {% for teacher in replaced_teachers %}
+                        <option value="{{ teacher }}" {% if teacher == selected_replaced %}selected{% endif %}>
+                            {{ teacher }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <form method="get" class="teacher-filter">
+            <div class="input-group">
+                <label class="input-group-text" for="replacing-select">Кто заменяет:</label>
+                <select name="replacing_teacher" id="replacing-select" class="form-select" onchange="this.form.submit()">
+                    <option value="">Все учителя</option>
+                    {% for teacher in replacing_teachers %}
+                        <option value="{{ teacher }}" {% if teacher == selected_replacing %}selected{% endif %}>
+                            {{ teacher }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+    </div>
+    {% if selected_replaced or selected_replacing %}
+        <div class="col-md-12 mt-2 text-end">
+            <a href="?" class="btn btn-outline-secondary">Сбросить фильтры</a>
+        </div>
+    {% endif %}
+</div>
+
+{% if schedules %}
+    <div class="card schedule-card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Урок</th>
+                            <th>Время</th>
+                            <th>Класс</th>
+                            <th>Кабинет</th>
+                            <th>Предмет</th>
+                            <th>Кого заменяют</th>
+                            <th>Кто заменяет</th>
+                            <th>Комментарий</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for schedule in schedules %}
+                            <tr class="{% if schedule.teacher_replaced == selected_replaced %}table-replaced{% endif %} {% if schedule.teacher_replacing == selected_replacing %}table-replacing{% endif %}">
+                                <td>{{ schedule.lesson_number }}</td>
+                                <td>{{ schedule.lesson_time|time:"H:i" }}</td>
+                                <td>{{ schedule.class_number }}</td>
+                                <td>{{ schedule.classroom }}</td>
+                                <td>{{ schedule.subject }}</td>
+                                <td class="teacher-replaced">{{ schedule.teacher_replaced }}</td>
+                                <td class="teacher-replacing">{{ schedule.teacher_replacing }}</td>
+                                <td>{{ schedule.comment|default:"-" }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        Замены не найдены
+    </div>
+{% endif %}
+{% endblock %} 

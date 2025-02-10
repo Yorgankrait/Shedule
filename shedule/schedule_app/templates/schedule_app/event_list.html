@@ -1,0 +1,51 @@
+{% extends 'schedule_app/base.html' %}
+
+{% block title %}Важные мероприятия{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h2>Важные мероприятия</h2>
+    </div>
+</div>
+
+{% if events %}
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        {% for event in events %}
+            <div class="col">
+                <div class="card h-100 {% if event.is_important %}important-event{% endif %}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ event.title }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            {{ event.date|date:"d.m.Y" }}
+                            {% if event.time %}
+                                {{ event.time|time:"H:i" }}
+                            {% endif %}
+                        </h6>
+                        <p class="card-text">{{ event.description|linebreaks|truncatewords:30 }}</p>
+                        {% if event.files.exists %}
+                            <div class="files-preview">
+                                {% for file in event.files.all|slice:":3" %}
+                                    {% if file.is_image %}
+                                        <img src="{{ file.file.url }}" alt="{{ file.file_name }}" class="file-preview">
+                                    {% endif %}
+                                {% endfor %}
+                                {% if event.files.count > 3 %}
+                                    <span class="more-files">+{{ event.files.count|add:"-3" }}</span>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                        <a href="{% url 'schedule_app:event_detail' event.id %}" class="btn btn-primary mt-3">
+                            Подробнее
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        Мероприятия не найдены
+    </div>
+{% endif %}
+{% endblock %} 
